@@ -26,9 +26,11 @@ public class Program {
                 "contains all the alphabets? " + answer + ". It took " + stopWatch.getTime() + "ms");
     }
     private static Boolean containsAllAlphabets(String input) {
+        System.out.println("sync method : length of the input: "+input.length());
+
         // if input is null or length is less than 26 then of course answer
         // is false
-        if (input == null || input.length() < 26) {
+        if (input.length() < 26) {
             return false;
         }
         // convert everything to lowercase to avoid confusion
@@ -44,6 +46,7 @@ public class Program {
                 if (foundAlphabets.size() == 26) return true;
             }
         }
+
         return false;
     }
 }
