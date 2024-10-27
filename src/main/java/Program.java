@@ -6,47 +6,45 @@ import java.util.Set;
 
 public class Program {
     public static void main(String[] args) throws FileNotFoundException {
+        // Read string from the input file
         String input = Util.readFile("input.txt");
+        // start the stop watch
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        boolean answer = containsAllAlphabets(input);
+        // get the result
+        WithoutThreads obj = new WithoutThreads();
+        boolean answer = obj.perform(input);
+        // stop the stop watch
         stopWatch.stop();
         System.out.println("contains all the alphabets? " + answer + ". It " +
                                    "took " + stopWatch.getTime() + "ms");
         System.out.println();
+        // multithreading logic
         System.out.println("starting with multithreading logic now");
         System.out.println();
         MultithreadingLogic multithreadingLogic = new MultithreadingLogic();
         stopWatch.reset();
         stopWatch.start();
-        answer = multithreadingLogic.findAllAlphabets(
+        answer = multithreadingLogic.perform(
                 input);
         stopWatch.stop();
         System.out.println(
                 "contains all the alphabets? " + answer + ". It took " + stopWatch.getTime() + "ms");
-    }
-    private static Boolean containsAllAlphabets(String input) {
-        System.out.println("sync method : length of the input: "+input.length());
 
-        // if input is null or length is less than 26 then of course answer
-        // is false
-        if (input.length() < 26) {
-            return false;
-        }
-        // convert everything to lowercase to avoid confusion
-        input = input.toLowerCase();
-        // data structure to store and keep track of already found character
-        Set<Character> foundAlphabets = new HashSet<>();
-        // for each character
-        for (int i = 0; i < input.length(); i++) {
-            char currentCharacter = input.charAt(i);
-            boolean isValidCharacter = Util.isValidChar(currentCharacter);
-            if (isValidCharacter) {
-                foundAlphabets.add(currentCharacter);
-                if (foundAlphabets.size() == 26) return true;
-            }
-        }
 
-        return false;
+        //     starting the processing with parallel stream logic
+        System.out.println();
+        System.out.println();
+        System.out.println("using parallel streams ");
+        System.out.println();
+        UsingParallelStreams usingParallelStreams = new UsingParallelStreams();
+        stopWatch.reset();
+        stopWatch.start();
+        boolean perform = usingParallelStreams.perform(input);
+        stopWatch.stop();
+        System.out.println(
+                "contains all the alphabets? " + perform + ". It took " + stopWatch.getTime() + "ms");
+
     }
+
 }

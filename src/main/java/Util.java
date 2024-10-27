@@ -25,6 +25,6 @@ public class Util {
     }
 
     public static boolean isValidChar(char currentCharacter) {
-        return currentCharacter >= 'a' && currentCharacter <= 'z';
+        return (currentCharacter >= 'a' && currentCharacter <= 'z') || (currentCharacter >= 'A' && currentCharacter <= 'Z');
     }
 }

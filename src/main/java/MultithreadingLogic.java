@@ -1,14 +1,14 @@
-import java.util.*;
+import javax.sound.midi.Soundbank;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.Lock;
-import java.util.stream.Collectors;
 
-public class MultithreadingLogic {
+public class MultithreadingLogic implements PerformAction {
 
-    final Object object = new Object();
-
-    public boolean findAllAlphabets(String input) {
+    @Override
+    public boolean perform(String input) {
         // corner cases validations
         if (input == null || input.length() < 26) {
             return false;
@@ -16,27 +16,27 @@ public class MultithreadingLogic {
         input = input.toLowerCase();
         // get the count of the available processors
         // int availableProcessors = Runtime.getRuntime().availableProcessors();
-        int availableProcessors = 3;
+        int availableProcessors = Runtime.getRuntime().availableProcessors();
+        System.out.println("availableProcessors: " + availableProcessors);
         // divide the input string to number of chunks equal to the available
         // processor counts
         List<String> theChunks = getTheChunks(input, availableProcessors);
         Set<Object> synchronizedSet = new HashSet<>();
         List<CompletableFuture<Void>> futures = theChunks.stream()
-                .map(x -> {
-                    return CompletableFuture.runAsync(() -> {
-                        for (int i = 0; i < x.length(); i++) {
-                            var currentCharacter = x.charAt(i);
-                            boolean isValidCharacter =
-                                    Util.isValidChar(currentCharacter);
-                            if (isValidCharacter) {
-                                synchronizedSet.add(currentCharacter);
-                                if (synchronizedSet.size() == 26) return;
-                            }
+                .map(x -> CompletableFuture.runAsync(() -> {
+                    for (int i = 0; i < x.length(); i++) {
+                        var currentCharacter = x.charAt(i);
+                        boolean isValidCharacter =
+                                Util.isValidChar(currentCharacter);
+                        if (isValidCharacter) {
+                            synchronizedSet.add(currentCharacter);
                         }
-                    });
-                }).toList();
+                    }
+                })).toList();
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                 .join();
+        System.out.println("set : " + synchronizedSet);
+        System.out.println("size: " + synchronizedSet.size());
         return synchronizedSet.size() == 26;
     }
 
